@@ -1,0 +1,75 @@
+.sidbrdetailsbox ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .sidbrdetailsbox #accordion li  {
+     margin-top: 15px;
+  }
+  .prdtsdbrhdr {
+      background-color: #4e73df;
+      padding: 10px 35px 10px 15px;
+      border-radius: 4px;
+      /* border: 1px solid #ddd; */
+      box-shadow: 0px 0px 10px #ddd;
+      position: relative;
+      font-weight: 700;
+      cursor: pointer;
+      color: #fff;
+      transition: all 400ms;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      font-size: 15px;
+
+  }
+  .prdtsdbrhdr::before {
+    content: "\f068";
+      position: absolute;
+      right: 10px;
+      color: #fff;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: "Font Awesome 5 Free";
+      font-weight: 900;
+      font-size: 11px;
+  }
+  .prdtsdbrhdr.collapsed {
+    border-radius: 4px;
+  }
+  .prdtsdbrhdr.collapsed::before {
+    content: "\f067";
+  }
+  .prodts-body {
+      /* border: 1px solid #ddd; */
+      box-shadow: 0px 0px 10px #ddd;
+      padding: 15px;
+      border-radius: 0;
+      font-size: 15px;
+  }
+  .prdtchkbxcstm {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+  }
+  .prdtchkbxcstm label {
+      margin-right: 5px;
+      margin-top: 15px;
+      position: relative;
+      cursor: pointer;
+      display: inline-block;
+      font-size: 12px;
+  }
+  .prdtchkbxcstm label span {
+     border: 1px solid #ddd;
+     padding: 6px 8px;
+     
+}
+
+  .prdtchkbxcstm input[type="checkbox"] {
+	display: none;
+}
+.prdtchkbxcstm input[type="checkbox"]:checked ~ span {
+    border: 1px solid  rgb(34, 34, 34);;
+    background-color: rgb(34, 34, 34);
+    color: #fff;
+}
