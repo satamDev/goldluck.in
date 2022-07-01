@@ -20,14 +20,41 @@
                       </div>
                 </div>
             </div>
-            <div class="col-5 col-md-6 col-lg-9 filterdsbl">
+            <!-- <div class="col-5 col-md-6 col-lg-9 filterdsbl"> -->
+            <div class="col-5 col-md-6 col-lg-9">    
                 <div class="filterbybox">
                     <div class="show-brw filtrttle">FILTER BY</div>
                     <div id="filterbarCollapse" class="show-mob filtrttle">FILTER BY <svg stroke="#666" width="20px"  height="20px" fill="#c4995e" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Layer_1"/><g id="Layer_2"><g><g><path class="st0" d="M160.4,356.49h-24.7V43.5c0-8.84-7.16-16-16-16s-16,7.16-16,16v312.99H78.99c-9.8,0-18.67,3.97-25.09,10.39     c-6.43,6.43-10.4,15.3-10.4,25.1c0,19.6,15.89,35.49,35.49,35.49h24.71v0v41.03c0,8.84,7.16,16,16,16s16-7.16,16-16v-41.03v0     h24.7c9.8,0,18.67-3.97,25.1-10.39c6.42-6.43,10.39-15.3,10.39-25.1C195.89,372.38,180,356.49,160.4,356.49z"/></g><g><path class="st0" d="M332.2,148.4c0-19.6-15.89-35.49-35.49-35.49H272V43.5c0-8.84-7.16-16-16-16s-16,7.16-16,16v69.41h-24.71     c-9.8,0-18.67,3.97-25.09,10.39c-6.43,6.43-10.4,15.3-10.4,25.1c0,19.6,15.89,35.49,35.49,35.49H240V468.5c0,8.84,7.16,16,16,16     s16-7.16,16-16V183.89h24.71c9.8,0,18.67-3.97,25.09-10.39C328.23,167.07,332.2,158.2,332.2,148.4z"/></g><g><path class="st0" d="M433.01,356.49H408.3V43.5c0-8.84-7.16-16-16-16s-16,7.16-16,16v312.99h-24.7c-9.8,0-18.67,3.97-25.1,10.39     c-6.42,6.43-10.39,15.3-10.39,25.1c0,19.6,15.89,35.49,35.49,35.49h24.7v0v41.03c0,8.84,7.16,16,16,16s16-7.16,16-16v-41.03v0     h24.71c9.8,0,18.67-3.97,25.09-10.39c6.43-6.43,10.4-15.3,10.4-25.1C468.5,372.38,452.61,356.49,433.01,356.49z"/></g></g></g></svg></div>
                     <div id="filterbar">
                       
                     <ul id="accordion">
-                          <li class="shwmshover">
+
+
+                        <?php
+                            $i = 0;
+                            foreach($filter_menu as $key => $data){
+                                if($i <= 5){
+                                ?>
+                                    <li class="shwmshover">
+                                        <div class="collapsed filtrhead" id="<?=$key?>" data-toggle="collapse" data-target="#<?=$key.'_'.$i?>" aria-expanded="false" aria-controls="collapseOne"><?=$key?></div>
+                                        <div id="<?=$key.'_'.$i?>" class="fltbody collapse " aria-labelledby="heading<?=$i?>" data-parent="#accordion">
+                                            <div>
+                                                <ul>
+                                                    <?php foreach($data as $val){?>
+                                                        <li><a href="javascript:addURL('<?=$key?>','<?=$val['name']?>')"><?=$val['name']?></a></li>
+                                                    <?php
+                                                        } 
+                                                    $i++; ?> 
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+                                <?php
+                                }
+                            }
+                        ?>
+
+                        <!--   <li class="shwmshover">
                           <div class="collapsed filtrhead" id="prcId" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
                               Price
                           </div>
@@ -45,8 +72,8 @@
                             </div>
                           </div>
 
-                        </li>
-                        <li class="shwmshover">
+                        </li> -->
+                        <!-- <li class="shwmshover">
                           <div class="filtrhead collapsed" id="DlryTime" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                              Delivery Time
                           </div>
@@ -55,14 +82,12 @@
                             <div >
                                 <div>
                                     <ul>
-                                        <li><a href="#"> Next Day Delivery (8)</a></li>
-                                       
+                                        <li><a href="javascript:addURL('delivery_time','next_day_delivery')"> Next Day Delivery (8)</a></li>                                       
                                     </ul>
                                  </div>
                             </div>
                           </div>
                           </li>
-
 
                           <li class="shwmshover">
                             <div class="filtrhead collapsed" id="DlryTime" data-toggle="collapse" data-target="#Metl" aria-expanded="false" aria-controls="collapseThree">
@@ -141,7 +166,7 @@
                                                 </ul>
                                               </div>
                                         </div>
-                                        </li>
+                                        </li> -->
 
 
                                         <li>
@@ -157,19 +182,26 @@
 
                   
 
-                   <!--  <div class="filterdbybox ">
+                    <div class="filterdbybox ">
                         <div class="mr-3">FILTERED BY</div>
                         <ul>
-                            <li> Gold <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                                width="8px" height="8px"  viewBox="0 0 94.926 94.926" style="enable-background:new 0 0 94.926 94.926;"
-                                xml:space="preserve">
-                           <g>
-                               <path d="M55.931,47.463L94.306,9.09c0.826-0.827,0.826-2.167,0-2.994L88.833,0.62C88.436,0.224,87.896,0,87.335,0
-                                   c-0.562,0-1.101,0.224-1.498,0.62L47.463,38.994L9.089,0.62c-0.795-0.795-2.202-0.794-2.995,0L0.622,6.096
-                                   c-0.827,0.827-0.827,2.167,0,2.994l38.374,38.373L0.622,85.836c-0.827,0.827-0.827,2.167,0,2.994l5.473,5.476
-                                   c0.397,0.396,0.936,0.62,1.498,0.62s1.1-0.224,1.497-0.62l38.374-38.374l38.374,38.374c0.397,0.396,0.937,0.62,1.498,0.62
-                                   s1.101-0.224,1.498-0.62l5.473-5.476c0.826-0.827,0.826-2.167,0-2.994L55.931,47.463z"/></svg></li>
-                            <li>Studs <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                            <?php 
+                                // print_r($_GET)
+                                foreach($_GET as $key => $val){
+                                    if($key != 'shortby'){
+                                        $val = ucwords(str_replace("_", " ", $val));
+                                        echo '<li onclick="removeParamTest(\''.$key.'\')">'.$val.' 
+                                            <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="8px" height="8px" viewBox="0 0 94.926 94.926" style="enable-background:new 0 0 94.926 94.926;" xml:space="preserve">
+                                                <g>
+                                                    <path d="M55.931,47.463L94.306,9.09c0.826-0.827,0.826-2.167,0-2.994L88.833,0.62C88.436,0.224,87.896,0,87.335,0c-0.562,0-1.101,0.224-1.498,0.62L47.463,38.994L9.089,0.62c-0.795-0.795-2.202-0.794-2.995,0L0.622,6.096c-0.827,0.827-0.827,2.167,0,2.994l38.374,38.373L0.622,85.836c-0.827,0.827-0.827,2.167,0,2.994l5.473,5.476c0.397,0.396,0.936,0.62,1.498,0.62s1.1-0.224,1.497-0.62l38.374-38.374l38.374,38.374c0.397,0.396,0.937,0.62,1.498,0.62s1.101-0.224,1.498-0.62l5.473-5.476c0.826-0.827,0.826-2.167,0-2.994L55.931,47.463z"/>
+                                            </svg>
+                                        </li>';
+                                    }
+                                }
+                            ?>
+
+
+                           <!--  <li>Studs <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                 width="8px" height="8px"  viewBox="0 0 94.926 94.926" style="enable-background:new 0 0 94.926 94.926;"
                                 xml:space="preserve">
                            <g>
@@ -195,7 +227,7 @@
                                    c-0.562,0-1.101,0.224-1.498,0.62L47.463,38.994L9.089,0.62c-0.795-0.795-2.202-0.794-2.995,0L0.622,6.096
                                    c-0.827,0.827-0.827,2.167,0,2.994l38.374,38.373L0.622,85.836c-0.827,0.827-0.827,2.167,0,2.994l5.473,5.476
                                    c0.397,0.396,0.936,0.62,1.498,0.62s1.1-0.224,1.497-0.62l38.374-38.374l38.374,38.374c0.397,0.396,0.937,0.62,1.498,0.62
-                                   s1.101-0.224,1.498-0.62l5.473-5.476c0.826-0.827,0.826-2.167,0-2.994L55.931,47.463z"/></svg></li>
+                                   s1.101-0.224,1.498-0.62l5.473-5.476c0.826-0.827,0.826-2.167,0-2.994L55.931,47.463z"/></svg></li> -->
                         </ul>
 
                         <div class="fltrbtns  w-100 ">
@@ -207,14 +239,14 @@
                         </div>
                         
                         
-                    </div> -->
+                    </div>
                 </div>
                 </div>
             </div>
          </div>
     </div>
 </section>
-
+<!-- <button onclick="removeParamTest('delivery_time')">Change URL</button> -->
 
 
 
@@ -231,28 +263,36 @@
         </div>
         <div class="modal-body">
            <div class="row row2">
+                <?php
+                    $i = 0;
+                    foreach($filter_menu as $key => $data){
+                        // if($i <= 5){
+                ?>
                <div class="col-md-3 col-lg-2">
                    <div class="mrfltrbox">
-                      <div class="mrfltrboxTtl">Occassion</div>
+                      <div class="mrfltrboxTtl"><?=$key?></div>
                       <ul class="mt-1">
-                          <li><a href="#">Weekend <span>(916)</span> </a></li>
-                          <li><a href="#">Vacation <span> (763)</span></a></li>
-                          <li><a href="#">Workwear  <span>(698)</span></a></li>
-                          <li><a href="#">Party <span>(472)</span> </a</li>
-                          <li><a href="#">Akshaya Tritiya <span> (447)</span></a></li>
-                          <li><a href="#">Festive <span> (363)</span></a></li>
+                        <?php foreach($data as $val){?>
+                            <li><a href="#"><?=$val['name']?></a></li>
+                        <?php
+                            } 
+                        $i++; ?> 
                       </ul>
                    </div>
                </div>
+                <?php
+                        // }
+                    }
+                ?>
 
-               <div class="col-md-3 col-lg-2">
+               <!-- <div class="col-md-3 col-lg-2">
                 <div class="mrfltrbox">
                    <div class="mrfltrboxTtl">Occassion</div>
                    <ul class="mt-1">
                        <li><a href="#">Weekend <span>(916)</span> </a></li>
                        <li><a href="#">Vacation <span> (763)</span></a></li>
                        <li><a href="#">Workwear  <span>(698)</span></a></li>
-                       <li><a href="#">Party <span>(472)</span> </a</li>
+                       <li><a href="#">Party <span>(472)</span> </a></li>
                        <li><a href="#">Akshaya Tritiya <span> (447)</span></a></li>
                        <li><a href="#">Festive <span> (363)</span></a></li>
                    </ul>
@@ -266,7 +306,7 @@
                        <li><a href="#">Weekend <span>(916)</span> </a></li>
                        <li><a href="#">Vacation <span> (763)</span></a></li>
                        <li><a href="#">Workwear  <span>(698)</span></a></li>
-                       <li><a href="#">Party <span>(472)</span> </a</li>
+                       <li><a href="#">Party <span>(472)</span> </a></li>
                        <li><a href="#">Akshaya Tritiya <span> (447)</span></a></li>
                        <li><a href="#">Festive <span> (363)</span></a></li>
                    </ul>
@@ -280,7 +320,7 @@
                        <li><a href="#">Weekend <span>(916)</span> </a></li>
                        <li><a href="#">Vacation <span> (763)</span></a></li>
                        <li><a href="#">Workwear  <span>(698)</span></a></li>
-                       <li><a href="#">Party <span>(472)</span> </a</li>
+                       <li><a href="#">Party <span>(472)</span> </a></li>
                        <li><a href="#">Akshaya Tritiya <span> (447)</span></a></li>
                        <li><a href="#">Festive <span> (363)</span></a></li>
                    </ul>
@@ -294,7 +334,7 @@
                        <li><a href="#">Weekend <span>(916)</span> </a></li>
                        <li><a href="#">Vacation <span> (763)</span></a></li>
                        <li><a href="#">Workwear  <span>(698)</span></a></li>
-                       <li><a href="#">Party <span>(472)</span> </a</li>
+                       <li><a href="#">Party <span>(472)</span> </a></li>
                        <li><a href="#">Akshaya Tritiya <span> (447)</span></a></li>
                        <li><a href="#">Festive <span> (363)</span></a></li>
                    </ul>
@@ -308,7 +348,7 @@
                        <li><a href="#">Weekend <span>(916)</span> </a></li>
                        <li><a href="#">Vacation <span> (763)</span></a></li>
                        <li><a href="#">Workwear  <span>(698)</span></a></li>
-                       <li><a href="#">Party <span>(472)</span> </a</li>
+                       <li><a href="#">Party <span>(472)</span> </a></li>
                        <li><a href="#">Akshaya Tritiya <span> (447)</span></a></li>
                        <li><a href="#">Festive <span> (363)</span></a></li>
                    </ul>
@@ -322,7 +362,7 @@
                        <li><a href="#">Weekend <span>(916)</span> </a></li>
                        <li><a href="#">Vacation <span> (763)</span></a></li>
                        <li><a href="#">Workwear  <span>(698)</span></a></li>
-                       <li><a href="#">Party <span>(472)</span> </a</li>
+                       <li><a href="#">Party <span>(472)</span> </a></li>
                        <li><a href="#">Akshaya Tritiya <span> (447)</span></a></li>
                        <li><a href="#">Festive <span> (363)</span></a></li>
                    </ul>
@@ -337,7 +377,7 @@
                        <li><a href="#">Weekend <span>(916)</span> </a></li>
                        <li><a href="#">Vacation <span> (763)</span></a></li>
                        <li><a href="#">Workwear  <span>(698)</span></a></li>
-                       <li><a href="#">Party <span>(472)</span> </a</li>
+                       <li><a href="#">Party <span>(472)</span> </a></li>
                        <li><a href="#">Akshaya Tritiya <span> (447)</span></a></li>
                        <li><a href="#">Festive <span> (363)</span></a></li>
                    </ul>
@@ -351,7 +391,7 @@
                        <li><a href="#">Weekend <span>(916)</span> </a></li>
                        <li><a href="#">Vacation <span> (763)</span></a></li>
                        <li><a href="#">Workwear  <span>(698)</span></a></li>
-                       <li><a href="#">Party <span>(472)</span> </a</li>
+                       <li><a href="#">Party <span>(472)</span> </a></li>
                        <li><a href="#">Akshaya Tritiya <span> (447)</span></a></li>
                        <li><a href="#">Festive <span> (363)</span></a></li>
                    </ul>
@@ -365,7 +405,7 @@
                        <li><a href="#">Weekend <span>(916)</span> </a></li>
                        <li><a href="#">Vacation <span> (763)</span></a></li>
                        <li><a href="#">Workwear  <span>(698)</span></a></li>
-                       <li><a href="#">Party <span>(472)</span> </a</li>
+                       <li><a href="#">Party <span>(472)</span> </a></li>
                        <li><a href="#">Akshaya Tritiya <span> (447)</span></a></li>
                        <li><a href="#">Festive <span> (363)</span></a></li>
                    </ul>
@@ -379,7 +419,7 @@
                        <li><a href="#">Weekend <span>(916)</span> </a></li>
                        <li><a href="#">Vacation <span> (763)</span></a></li>
                        <li><a href="#">Workwear  <span>(698)</span></a></li>
-                       <li><a href="#">Party <span>(472)</span> </a</li>
+                       <li><a href="#">Party <span>(472)</span> </a></li>
                        <li><a href="#">Akshaya Tritiya <span> (447)</span></a></li>
                        <li><a href="#">Festive <span> (363)</span></a></li>
                    </ul>
@@ -393,12 +433,12 @@
                        <li><a href="#">Weekend <span>(916)</span> </a></li>
                        <li><a href="#">Vacation <span> (763)</span></a></li>
                        <li><a href="#">Workwear  <span>(698)</span></a></li>
-                       <li><a href="#">Party <span>(472)</span> </a</li>
+                       <li><a href="#">Party <span>(472)</span> </a></li>
                        <li><a href="#">Akshaya Tritiya <span> (447)</span></a></li>
                        <li><a href="#">Festive <span> (363)</span></a></li>
                    </ul>
                 </div>
-            </div>
+            </div> -->
            </div>
         </div>
         
@@ -427,3 +467,60 @@
             border: 1px solid;
         }
   </style>
+
+  <script>
+    function addURL(key, value){
+        var data=window.location+"&"+key+"="+value;
+        window.location.href = data;
+
+        // var sourceURL=window.location.href;
+
+        // var rtn = sourceURL.split("?")[0],
+        //     param,
+        //     params_arr = [],
+        //     queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
+        //     if (queryString !== "") {
+        //         params_arr = queryString.split("&");
+        //         for (var i = params_arr.length - 1; i >= 0; i -= 1) {
+        //             param = params_arr[i].split("=")[0];
+        //             if (param === key) {
+        //                 // params_arr.splice(i, 1);
+        //                 // params_arr[i].split("=")[0].push(value);
+        //                 params_arr[i] = params_arr[i] + "," + value;
+        //                 // console.log(params_arr);
+        //             }
+        //             else if(param != key){
+        //                 // params_arr.push(key+"="+value);
+        //                 // console.log(params_arr);
+        //             }
+        //         }
+        //         if (params_arr.length) rtn = rtn + "?" + params_arr.join("&");
+        //     }
+        //     console.log(rtn);
+        //     window.location.href = rtn;
+    }
+
+    function removeParam(key, sourceURL) {
+        var rtn = sourceURL.split("?")[0],
+            param,
+            params_arr = [],
+            queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
+            if (queryString !== "") {
+                params_arr = queryString.split("&");
+                for (var i = params_arr.length - 1; i >= 0; i -= 1) {
+                    param = params_arr[i].split("=")[0];
+                    if (param === key) {
+                        params_arr.splice(i, 1);
+                    }
+                }
+                if (params_arr.length) rtn = rtn + "?" + params_arr.join("&");
+            }
+        return rtn;
+    }
+
+    function removeParamTest(key){
+        var originalURL = window.location.href;        
+        var alteredURL = removeParam(key, originalURL);
+        window.location.href = alteredURL;
+    }
+</script>

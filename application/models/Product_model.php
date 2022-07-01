@@ -73,11 +73,13 @@
 
 			if($short_by != null){
 				if($short_by == 'whatsnew')
-					$this->db->order_by("created_at", "asc");
-				else if($short_by == 'price_hign_to_low')
-					$this->db->order_by("price", "desc");
-				else if($short_by == 'price_low_to_high')
-					$this->db->order_by("created_at", "asc");
+					$this->db->order_by("created_at", "desc");
+				else if($short_by == 'price_hign_to_low'){
+					$this->db->order_by("weight", "desc");
+				}
+				else if($short_by == 'price_low_to_high'){
+					$this->db->order_by("weight", "asc");
+				}
 				else if($short_by == 'discount')
 					$this->db->order_by("discount_percentage", "desc");
 			}
@@ -95,7 +97,7 @@
 				// wishlist enabled while logged in
 				if ($query->num_rows() > 0) {
 					foreach ($query->result() as $row) {
-						$row->price = $this->decimal_two_digit($row->weight * $gold_rate['price_24_karet']);
+						$row->price = $this->decimal_two_digit((float)$row->weight * $gold_rate['price_24_karet']);
 						$product_id = $row->product_id;
 						$user_id = $this->session->userdata('userId');
 						$has_wishlist = $this->product_exist_in_wishlist($user_id, $product_id);
@@ -111,7 +113,7 @@
 			}else{
 				if ($query->num_rows() > 0) {
 					foreach ($query->result() as $row) {
-						$row->price = $this->decimal_two_digit($row->weight * $gold_rate['price_24_karet']);
+						$row->price = $this->decimal_two_digit((float)$row->weight * $gold_rate['price_24_karet']);
 						$data[] = $row;
 					}
 					return $data;
@@ -141,7 +143,7 @@
 				// wishlist enabled while logged in
 				if ($query->num_rows() > 0) {
 					foreach ($query->result() as $row) {
-						$row->price = $this->decimal_two_digit($row->weight * $gold_rate['price_24_karet']);
+						$row->price = $this->decimal_two_digit((float)$row->weight * $gold_rate['price_24_karet']);
 						$product_id = $row->product_id;
 						$user_id = $this->session->userdata('userId');
 						$has_wishlist = $this->product_exist_in_wishlist($user_id, $product_id);
@@ -156,7 +158,7 @@
 			}else{
 				if ($query->num_rows() > 0) {
 					foreach ($query->result() as $row) {
-						$row->price = $this->decimal_two_digit($row->weight * $gold_rate['price_24_karet']);
+						$row->price = $this->decimal_two_digit((float)$row->weight * $gold_rate['price_24_karet']);
 						$data[] = $row;
 					}
 				}
@@ -207,7 +209,7 @@
 					}else{
 						$result['wishlist'] = 0;
 					}
-					$result['price'] = $this->decimal_two_digit($result['weight'] * $gold_rate['price_24_karet']);	
+					$result['price'] = $this->decimal_two_digit((float)$result['weight'] * $gold_rate['price_24_karet']);	
 				}
 				return $result;
 			}
@@ -373,6 +375,12 @@
 				$query[$key]['items'] = $this->get_all_order_items($order_id);
 			}
 			return $query;
+		}
+
+		public function getDataFromTable($tableName){
+			$this->db->select(['id', 'name']);
+			$query = $this->db->get($tableName);
+			return $query->result();
 		}
 
 	}

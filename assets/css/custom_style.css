@@ -1147,7 +1147,7 @@ footer.footer2 {
 .ProductBox {
     background: #fff;
     box-shadow: 0px 0px 10px #ddd;
-    padding: 60px 20px;
+    /*padding: 60px 20px;*/
     position: relative;
     text-align: center;
     overflow: hidden;

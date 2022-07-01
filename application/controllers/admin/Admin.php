@@ -639,11 +639,36 @@ class Admin extends CI_Controller{
 
         $this->init_product_model();
         $this->load->library('csvimport');
-        $file_data = $this->csvimport->get_array($_FILES["csv_file"]["tmp_name"]);        
+        $file_data = $this->csvimport->get_array($_FILES["csv_file"]["tmp_name"]);
+
+        // $i = 0;
+        // foreach($file_data as $row){
+        //     if(array_key_exists("", $row)){
+        //         unset($row[""]);
+        //     }
+        //     $file_data[$i] = $row;
+        //     $i++;
+        // }
+        // echo "<pre>";
+        // print_r($file_data);
+        // echo "</pre>";
+        // exit;
+
+        $filter_menu = $this->filter_menu;
+        $filter_menu_1 = [];
+        $i = 0;
+        foreach ($filter_menu as $filter_option) {
+            $filter_option = str_replace(" ", "_", $filter_option);
+            $filter_menu_1[$i++] = $filter_option;
+        }
+
 
         $i = 0;
         foreach($file_data as $row){
-            
+            if(array_key_exists("", $row)){
+                unset($row[""]);
+            }
+
             $exist_product_code = $this->Product_model->check_product_using_product_code($row['code']);
 
             if($exist_product_code){
@@ -664,7 +689,7 @@ class Admin extends CI_Controller{
                 $row['created_at'] = date("Y-m-d H:m:s");
 
                 foreach($row as $key => $val){
-                    if(in_array($key, $this->filter_menu)){                    
+                    if(in_array($key, $filter_menu_1)){                    
                         if(!empty($val)){               
                             $values = explode(",",$val);
                             $new_values = "";
@@ -688,6 +713,7 @@ class Admin extends CI_Controller{
             }
         }
 
+        // $error = 1;
         if($error != 1){
             if($this->Product_model->insert_csv_products($file_data))
                 echo "<span style='color:green'>Successfully All Product Added...</span>";
