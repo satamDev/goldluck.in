@@ -105,3 +105,5 @@ define('goldpricez_API_KEY', '2eb9029f304be2c6691267eb722a896e2eb9029f');
 define('gold_api_unit_type', 'gram');
 define('gold_api_currency_code', 'INR');
 //////////////////////////////////////////////////////////////////
+define ("filter_menu", serialize (array ("style","gender","no of stone","occasion","delivery time","design","collections","stone shape","stone color","type","metal","purity")));
+//////////////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Home extends CI_Controller {
 
-	private $number_of_product_per_page = 30;
+	private $number_of_product_per_page = 4;
 	private $site_image_path = 'assets/images/quick_request/';
 
 	public function __construct(){
@@ -69,6 +69,33 @@ class Home extends CI_Controller {
 
 	private function newotp(){
         return rand(1000,9999);
+    }
+
+    // Same method EXIST in Admin.php controller
+    private function filter_menu(){ //Filter menu generate on product upload page
+        $filter_menu = unserialize(filter_menu);
+
+        $i = 0;
+        $filter_menu_1 = [];
+        foreach ($filter_menu as $filter_option) {
+            $filter_option = "product_" . str_replace(" ", "_", $filter_option);
+            $filter_menu_1[$i++] = $filter_option;
+        }
+        $i = 0;
+        $new_arr = [];
+        foreach ($filter_menu_1 as $filter_option) {  
+            $this->init_product_model();          
+            $results = $this->Product_model->getDataFromTable($filter_option);
+            $j = 0;
+            foreach ($results as $result) {
+                $new_arr[$filter_menu[$i]][$j++] = [
+                    "id" => $result->id,
+                    "name" => $result->name,
+                ];
+            }
+            $i++;
+        }
+        return $new_arr;
     }
 
 	private function do_mail($info, $otp){
@@ -503,6 +530,73 @@ class Home extends CI_Controller {
 		}
 	}
 
+
+	public function get_products(){
+		$this->init_product_model();
+
+		$page_no = $this->input->get('page_no');
+
+		$category = $this->input->get('category');
+		$sub_category= $this->input->get('sub_category');
+		$shortby = $this->input->get('shortby');
+
+		$data1['pageSize'] = $this->number_of_product_per_page;
+		$data1['pageNo'] = $page_no;
+		$start = ($data1['pageSize'] * $data1['pageNo']);
+		
+		if($category != null && $sub_category == null){
+			$category = str_replace('-', ' ', $category);
+			$data1['totalCount'] = $this->Product_model->record_count($category);
+			$category_result = $this->Product_model->getIdOfCategory($category);
+			$category_id = $category_result[0]['id'];
+			$data1['results'] = $this->Product_model->fetch_products($data1['pageSize'], $start, $category_id, null, $shortby);
+		}else if($category != null && $sub_category != null){
+			$category = str_replace('-', ' ', $category);
+			$category_result = $this->Product_model->getIdOfCategory($category);
+			$category_id = $category_result[0]['id'];
+			$sub_category = str_replace('-', ' ', $sub_category);
+			$data1["totalCount"] = $this->Product_model->record_count($category, $sub_category);
+			$sub_category_result = $this->Product_model->getIdOfSubCategoryByCategoryId($category_id, $sub_category);
+       		$sub_category_id = $sub_category_result[0]['id'];
+			$data1['results'] = $this->Product_model->fetch_products($data1['pageSize'], $start, $category_id, $sub_category_id, $shortby);
+		}
+		return $data1;
+	}
+
+	public function show_all_products(){
+		$data = $this->get_products();
+
+		foreach($data['results'] as $key => $val){			
+			$data['results'][$key]->givven_price = $val->price;
+
+
+			if($this->session->has_userdata('retailer_discount_percentage') && !empty($this->session->userdata('retailer_discount_percentage')))
+				$overall_discount_percentage = $val->discount_percentage + $this->session->userdata('retailer_discount_percentage');
+			else
+				$overall_discount_percentage =  $val->discount_percentage;
+
+			$discounted_price = $val->price - (($overall_discount_percentage / 100) * $val->price);
+
+			$data['results'][$key]->discounted_price = number_format($discounted_price, 2);
+			$data['results'][$key]->cover_image = base_url().'assets/images/products/'.$val->cover_image;
+
+			if(!$this->session->has_userdata('userId')) $data['results'][$key]->wishlist = 0;
+
+			if($this->session->has_userdata('userId'))
+				$data['results'][$key]->userId = $this->session->userdata('userId');
+			else
+				$data['results'][$key]->userId = 0;
+
+			$seo_friendly_title = strtolower(str_replace(' ', '-', $val->title));
+			$data['results'][$key]->productDetailsUrl = base_url().'details/'.$seo_friendly_title .'/'.$val->product_id;
+		}
+		
+		echo json_encode($data);
+		// echo "<pre>";
+		// print_r($data);
+		// echo "</pre>";
+	}
+
 	public function all_products($category_and_pagination_no = null, $sub_category = null){	// products page view
 		$this->init_product_model();
 		$this->load->library("pagination");
@@ -615,25 +709,33 @@ class Home extends CI_Controller {
 		
 		$data1["links"] = $this->pagination->create_links();
 
+		$data1["results"] = ""; //manually change this to stop flowing data..programming purpose
+
 		$this->init_Site_details_model();
 		$data = [
 			'title' => 'Products',
 			'site_details' => $this->getSiteBasicData(),
 			'home_menu_category' => $this->getCategoryWiseSubCategory(),
-			'home_menu_pages' => $this->site_details_model->getTopPages()
+			'home_menu_pages' => $this->site_details_model->getTopPages(),			
 		];
+
+		$data_filter = [
+			'filter_menu' => $this->filter_menu(),
+		];
+
 		$this->load->view('inc/header', $data);
 		$this->load->view('inc/header_menu', $data);
-		if(!empty($data1['results']))
-			$this->load->view("inc/product_filter_section");
+		// if(!empty($data1['results']))
+		$this->load->view("inc/product_filter_section", $data_filter);
 		$this->load->view("user/products", $data1);
 		$this->load->view('inc/footer', $data);
+		$this->load->view('inc/customjs/products_js');
 		$this->load->view('inc/customjs/cart_js');
 		$this->load->view('inc/customjs/wishlist_js');
 		$this->load->view('inc/customjs/product_filter_js');
 	}
 
-	public function product_details($product_id){	//product details page view
+	public function product_details($product_title, $product_id){	//product details page view
 		$this->init_Site_details_model();
 		$this->init_product_model();
 
@@ -1181,6 +1283,38 @@ class Home extends CI_Controller {
 		$this->init_product_model();
 		$featured_products = $this->Product_model->get_featured_products();		
 		return $featured_products;
+	}
+
+	public function setFilterSection(){
+		$has_data = false;
+
+		$key = $this->input->get('key');
+		$filter_section_id = $this->input->get('selected_id');
+		$filter_section_value = $this->input->get('selected_value');
+
+		$filter_session_array = ($this->session->has_userdata('filter_array'))?$this->session->userdata('filter_array'):[];
+
+		if(!empty($filter_session_array)){
+			if(array_key_exists($key, $filter_session_array)){
+				if( !in_array( $filter_section_id, $filter_session_array[$key] ) ){
+					array_push($filter_session_array[$key], $filter_section_id);
+				}else{
+					$has_data = true;
+				}
+			}else{
+				$filter_session_array[$key] = [ $filter_section_id ];
+			}
+		}else{
+			$filter_session_array = [ $key => [$filter_section_id ] ];
+		}
+
+		$this->session->unset_userdata('filter_array');
+		$this->session->set_userdata('filter_array', $filter_session_array);
+		
+
+		// $this->session->sess_destroy();
+		// print_r($_SESSION);
+		echo json_encode(['has_data' => $has_data, 'session' => $_SESSION]);
 	}
 
 }

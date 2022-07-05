@@ -53,11 +53,30 @@
 	   		return $query[0];
 	   	}	   	
 
-	   	public function fetch_products($limit, $start, $category_id = null, $sub_category_id = null, $short_by = null) {
+	   	public function fetch_products($limit, $start, $category_id = null, $sub_category_id = null, $short_by = null) {	   		
 			$this->db->limit($limit, $start);
 
+
+			$filter_options = $this->session->has_userdata('filter_array')?$this->session->userdata('filter_array'):[];
+
+			$sql_addition = ",";
+			foreach($filter_options as $key => $val){
+				$key_to_field_name = str_replace(" ", "_", $key);
+				// $filed_value = implode(',', $val);
+				
+				$sql_addition .= $key_to_field_name.',';
+
+				// $this->db->like($key_to_field_name, $filed_value);
+			}			
+
+			if(!empty($filter_options))
+				$sql = 'p.uid as product_id, p.title, p.price, p.discount_percentage, p.weight, p.cover_image' . $sql_addition;
+			else
+				$sql = 'p.uid as product_id, p.title, p.price, p.discount_percentage, p.weight, p.cover_image';
+
+
 			// $this->db->select('p.uid as product_id, p.title, p.price, p.discount_percentage, p.weight, i.image_path');
-			$this->db->select('p.uid as product_id, p.title, p.price, p.discount_percentage, p.weight, p.cover_image');
+			$this->db->select($sql);
 			
 			$this->db->from('product p');
 			// $this->db->join('images_of_products i', 'p.uid=i.product_uid', 'left');
@@ -69,7 +88,6 @@
 				$this->db->where('category_id', $category_id);
 				$this->db->where('sub_category_id', $sub_category_id);
 			}
-
 
 			if($short_by != null){
 				if($short_by == 'whatsnew')
@@ -83,6 +101,7 @@
 				else if($short_by == 'discount')
 					$this->db->order_by("discount_percentage", "desc");
 			}
+			
 
 			$this->db->where('p.status', 1);
 			
@@ -90,10 +109,11 @@
 			$query = $this->db->get();
 			// echo $this->db->last_query();
 
+
 			$gold_rate = $this->get_gold_price();
 
-			if($this->session->has_userdata('userId')){
-				// user logged in
+			if($this->session->has_userdata('userId')){ 	// user logged in
+				$data = [];
 				// wishlist enabled while logged in
 				if ($query->num_rows() > 0) {
 					foreach ($query->result() as $row) {
@@ -105,21 +125,61 @@
 							$row->wishlist = 1;
 						}else{
 							$row->wishlist = 0;
-						}	
-						$data[] = $row;					
+						}
+						$data[] = $row;	
 					}
 					return $data;
 				}
-			}else{
+			}else{	// user not logged in
 				if ($query->num_rows() > 0) {
 					foreach ($query->result() as $row) {
-						$row->price = $this->decimal_two_digit((float)$row->weight * $gold_rate['price_24_karet']);
-						$data[] = $row;
+						// print_r($row);
+						
+						$has_filter = false;
+
+						if(!empty($filter_options))	$has_filter = true;
+
+						if($has_filter){
+							if(!empty($filter_options)){
+								foreach($filter_options as $key => $val){
+									if(isset($row->$key)){
+										$filter_value_array = explode(",",$row->$key);
+										$result=array_intersect($filter_value_array,$val);
+										// print_r($result);
+
+										if(count($result) > 0){
+											$row->price = $this->decimal_two_digit((float)$row->weight * $gold_rate['price_24_karet']);
+											$data[] = $row;
+										}
+									}else{
+										$data = [];
+									}
+								}
+							}
+						}else{
+							$row->price = $this->decimal_two_digit((float)$row->weight * $gold_rate['price_24_karet']);
+							$data[] = $row;
+						}						
 					}
-					return $data;
+					return (isset($data)) ? $data : [];					
 				}
 			}
-			return false;
+
+
+			// $filter_options = $this->session->has_userdata('filter_array')?$this->session->userdata('filter_array'):[];
+
+			// print_r($data);
+
+			// foreach($filter_options as $key => $val){
+			// 	$key_to_field_name = str_replace(" ", "_", $key);
+			// 	$filed_value = implode(',', $val);
+				
+
+			// 	// $this->db->where($key_to_field_name, (int)$filed_value);
+			// }
+
+
+			return [];
 		}
 
 		public function get_featured_products(){
